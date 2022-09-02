@@ -9,7 +9,7 @@ import retrofit2.http.Query
  */
 interface PortrayalApi {
 
-    @GET("/photos")
+    @GET("/photos/")
     suspend fun getImages(
         @Query("order_by") orderBy: String,
         @Query("page") page: Int,

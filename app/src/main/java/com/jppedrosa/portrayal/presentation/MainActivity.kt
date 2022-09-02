@@ -1,12 +1,21 @@
 package com.jppedrosa.portrayal.presentation
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.jppedrosa.portrayal.R
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import com.jppedrosa.portrayal.databinding.ActivityMainBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityMainBinding
+    private val viewModel: MainViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        viewModel.getImages()
     }
 }

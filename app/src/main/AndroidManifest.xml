@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.jppedrosa.portrayal">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".PortrayalApplication"
         android:allowBackup="true"

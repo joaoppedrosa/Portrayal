@@ -6,6 +6,9 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+def configsProperties = new Properties()
+configsProperties.load(new FileInputStream(rootProject.file("configs.properties")))
+
 android {
     compileSdk 32
 
@@ -17,6 +20,11 @@ android {
         versionName "1.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField "String", "UNSPLASH_API_KEY", configsProperties['UNSPLASH_API_KEY']
+    }
+
+    buildFeatures {
+        dataBinding = true
     }
 
     buildTypes {
@@ -25,6 +33,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

@@ -1,5 +1,6 @@
 package com.jppedrosa.portrayal.data.repository
 
+import com.jppedrosa.portrayal.common.Resource
 import javax.inject.Inject
 import com.jppedrosa.portrayal.data.remote.PortrayalApi
 import com.jppedrosa.portrayal.data.remote.dto.Image
@@ -12,7 +13,18 @@ class PortrayalRepositoryImpl @Inject constructor(
     private val api: PortrayalApi
 ) : PortrayalRepository {
 
-    override suspend fun getImages(orderBy: String, page: Int, limit: Int): List<Image> {
-        return this.api.getImages(orderBy, page, limit)
+    override suspend fun getImages(orderBy: String, page: Int, limit: Int): Resource<List<Image>> {
+        return try {
+            Resource.Success(
+                data = api.getImages(
+                    orderBy = orderBy,
+                    page = page,
+                    limit = limit
+                )
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            Resource.Error(e.message ?: "Unknown error")
+        }
     }
 }
