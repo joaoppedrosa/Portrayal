@@ -1,14 +1,14 @@
 package com.jppedrosa.portrayal.presentation
 
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jppedrosa.portrayal.common.Resource
-import com.jppedrosa.portrayal.domain.repository.PortrayalRepository
+import com.jppedrosa.portrayal.domain.uc.GetImagesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 /**
@@ -16,35 +16,29 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val repository: PortrayalRepository
+    private val getImagesUseCase: GetImagesUseCase
 ) : ViewModel() {
 
-    var state by mutableStateOf(MainState())
-        private set
+    private val _state = mutableStateOf(MainState())
+    val state: State<MainState> = _state
 
-    fun getImages() {
-        val orderBy = "relevant"
-        viewModelScope.launch {
-            state = state.copy(
-                isLoading = true,
-                error = null
-            )
-            when (val result = repository.getImages(orderBy, 1, 50)) {
-                is Resource.Success<*> -> {
-                    state = state.copy(
-                        images = result.data ?: emptyList(),
-                        isLoading = false,
-                        error = null
-                    )
+    init {
+        getImages()
+    }
+
+    private fun getImages() {
+        this.getImagesUseCase().onEach { result ->
+            when (result) {
+                is Resource.Success -> {
+                    this._state.value = MainState(images = result.data ?: emptyList())
                 }
                 is Resource.Error -> {
-                    state = state.copy(
-                        images = null,
-                        isLoading = false,
-                        error = result.message
-                    )
+                    this._state.value = MainState(error = result.message ?: "Unexpected error!")
+                }
+                is Resource.Loading -> {
+                    this._state.value = MainState(isLoading = true)
                 }
             }
-        }
+        }.launchIn(this.viewModelScope)
     }
 }

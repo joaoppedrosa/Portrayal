@@ -7,6 +7,6 @@ import com.jppedrosa.portrayal.data.remote.dto.Image
  */
 data class MainState(
     val isLoading: Boolean = false,
-    val images: List<Image>? = emptyList(),
-    val error: String? = null
+    val images: List<Image> = emptyList(),
+    val error: String = ""
 )
